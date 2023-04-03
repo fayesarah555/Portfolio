@@ -1,0 +1,284 @@
+// Disclaimer: the way @layer is being used in this file is for accommodating the flow of demo, that is not the ideal way to organize the CSS.
+
+@layer config, resets;
+
+@layer config {
+  :root {
+    // 1. fluid type
+    font-size: clamp(100%, 90% + 0.5vi, 150%);
+    // 2. comfortable leading
+    line-height: 1.35;
+    // 3. auto dark mode
+    color-scheme: dark light;
+  }
+}
+
+@layer resets {
+  *,
+  *::before,
+  *::after {
+    // 4. enable kern features. https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Fonts/OpenType_fonts_guide#kerning
+    font-feature-settings: "kern";
+    font-kerning: normal;
+    // 5. sharpens letters and make them render very similarly across all screens
+    -moz-osx-font-smoothing: grayscale !important;
+    -webkit-font-smoothing: antialiased !important;
+    // 6. border-box include padding and border in width and height
+    box-sizing: border-box;
+  }
+
+  *:focus-visible {
+    // 7. branded focus outline
+    outline: 2px solid crimson;
+    outline-offset: 2px;
+  }
+
+  *::selection {
+    // 8. branded selection color
+    background: crimson;
+  }
+
+  :where(a) {
+    // 9. branded link underlines
+    color: inherit;
+    text-decoration-color: crimson;
+    text-decoration-style: wavy;
+    text-underline-offset: 2px;
+
+    &:hover {
+      text-decoration-color: currentcolor;
+    }
+
+    &:focus {
+      text-decoration: none;
+    }
+  }
+}
+
+@layer config {
+  :root {
+    // 10. set up essential design tokens
+    --gutter: clamp(2.125ch, 2.5vmax, 2.5ch);
+    --stack: clamp(1.25ex, 2.5vmax, 1.75ex);
+    --line-length: 70ch;
+    --ol-style-type: decimal;
+  }
+}
+
+@layer resets {
+  * {
+    // 11. reset spacing
+    margin: 0;
+    padding: 0;
+  }
+
+  :where(header, main, footer) {
+    // 12. optimize line-length
+    padding-inline: calc((100vi - min(var(--line-length), 80vi)) / 2);
+    // 13. space out header, main, and footer
+    padding-block: 5vmax;
+  }
+
+  :where(main) {
+    // 14. branded horizontal rule between landmarks
+    border-block: 1px solid;
+    border-image-source: linear-gradient(
+      to right,
+      transparent,
+      crimson,
+      transparent
+    );
+    border-image-slice: 1;
+  }
+
+  :where(ol, ul, figure, *:not(p) + p) {
+    // 15. standard stack spacing and paragraph indent
+    margin-block-start: var(--stack);
+  }
+
+  :where(li ol, li ul) {
+    margin-block-start: 0;
+  }
+
+  :where(li) {
+    margin-inline-start: var(--list-indent, 0);
+  }
+
+  :where(li li) {
+    margin-inline-start: var(--list-indent, var(--gutter));
+  }
+
+  :where(p:not(:first-of-type)) {
+    text-indent: var(--gutter);
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) + p {
+    text-indent: 0;
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) {
+    // 16. refine heading spacing
+    margin-block-start: calc(var(--stack) * 1.5);
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) + *:not(h1, h2, h3, h4, h5, h6) {
+    margin-block-start: calc(var(--stack) / 1.5);
+  }
+}
+
+@layer config {
+  :root {
+    // 17. set up type scale based on traditional point sizes
+    --font-size-4xl: 3.999rem;
+    --font-size-3xl: 2.999rem;
+    --font-size-2xl: 2rem;
+    --font-size-xl: 1.666rem;
+    --font-size-lg: 1.166rem;
+    --font-size-md: 1rem;
+  }
+}
+
+@layer resets {
+  :where(h1) {
+    font-size: var(--font-size-4xl);
+  }
+
+  :where(h2) {
+    font-size: var(--font-size-3xl);
+  }
+
+  :where(h3) {
+    font-size: var(--font-size-2xl);
+  }
+
+  :where(h4) {
+    font-size: var(--font-size-xl);
+  }
+
+  :where(h5) {
+    font-size: var(--font-size-lg);
+  }
+
+  :where(h6) {
+    font-size: var(--font-size-md);
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) {
+    // 18. refine heading leading
+    line-height: 1.1;
+  }
+
+  :where(h1) {
+    // 19. style the page title
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 1px 0 2px crimson;
+  }
+
+  :where(header) {
+    // 20. set lede text font-size
+    font-size: 1.166rem;
+  }
+
+  :where([lang^="en"] header p:first-of-type)::first-letter {
+    // 21. add drop cap
+    float: left;
+    margin-inline-end: 0.5ch;
+    padding: 0 0.5ch;
+    font-size: 2.6em;
+    color: crimson;
+    border: 3px double;
+  }
+
+  @-moz-document url-prefix() {
+    :where([lang^="en"] header p:first-of-type)::first-letter {
+      padding-block: 0.8ex; // fixes Firefox padding
+    }
+  }
+
+  :where(sup) {
+    // 22. fix superscript
+    line-height: 1;
+  }
+}
+
+@layer config {
+  :root {
+    // 23. switch to system UI font
+    font-family: system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([lang^="zh"]) {
+      font-weight: 300;
+      letter-spacing: 0.01ch;
+    }
+  }
+}
+
+@layer resets {
+  :where(h1, h2, h3, h4, h5, h6) {
+    // 24. switch to condensed headings
+    font-weight: 900;
+    font-stretch: condensed;
+  }
+
+  :where(header p)::first-line {
+    // 25. utilize small caps
+    font-variant: small-caps;
+    letter-spacing: 0.05ch;
+  }
+}
+
+@layer config {
+  :root {
+    // 26. refine body text leading
+    line-height: 1.45;
+  }
+
+  [lang^="zh"] {
+    // 27. fine-tune CJK font-sizes
+    --font-size-4xl: 2.999rem;
+    --font-size-3xl: 2.166rem;
+    --font-size-2xl: 1.833rem;
+    --font-size-xl: 1.333rem;
+    --font-size-lg: 1.166rem;
+    --font-size-md: 1rem;
+    // 28. fine-tune CJK lists
+    --ol-style-type: cjk-ideographic;
+    --list-indent: calc(var(--gutter) * 1.25);
+  }
+}
+
+@layer resets {
+  :where(ol) {
+    // 28
+    list-style: var(--ol-style-type);
+  }
+}
+
+@layer config {
+  [lang^="zh"] {
+    // 29. fine-tune CJK leading and font-size
+    font-size: clamp(90%, 80% + 0.5vi, 120%);
+    line-height: 1.6;
+    // 30. fine-tune CJK gutter
+    --gutter: 2em;
+  }
+}
+
+@layer resets {
+  // 31. enhance figure image
+  :where(figure img) {
+    display: block;
+    margin-inline: auto;
+    max-inline-size: 100%;
+    border-radius: 1em;
+    box-shadow: 0 0 100em rgba(crimson, 0.5);
+  }
+
+  :where(figcaption) {
+    font-size: 0.8em;
+    text-align: center;
+  }
+}
